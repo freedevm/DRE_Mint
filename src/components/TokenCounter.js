@@ -1,46 +1,37 @@
 // src/components/TokenCounter.js
 import React, { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
-import DRE from "../artifacts/contracts/DRE.json";
 
-const TokenCounter = () => {
-    const [tokenCounter, setTokenCounter] = useState('0');
-    const [loading, setLoading] = useState(true);
+const TokenCounter = ({ contract }) => {
+  const [tokenCounter, setTokenCounter] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    // Replace with your actual Infura or Alchemy project ID/API URL
-    // const provider = new ethers.JsonRpcProvider('https://eth-sepolia.g.alchemy.com/v2/hra0WS7LQz4cQfdKoscbvfEFBDB54ELk');
-    const provider = new ethers.providers.JsonRpcProvider('https://eth-sepolia.g.alchemy.com/v2/hra0WS7LQz4cQfdKoscbvfEFBDB54ELk');
-
-    // Replace with your deployed contract's ABI and address
-    const contractAddress = '0x7C2a827254B7a6b8dE57F1547409c8677188A1dd';
-    const contractAbi = DRE.abi;
-
-    const fetchTokenCounter = async () => {
-        try {
-            const contract = new ethers.Contract(contractAddress, contractAbi, provider);
-            const count = await contract.tokenIdCounter();
-            console.log("count", count)
-            setTokenCounter(count.toString());
-        } catch (error) {
-            console.error("Error fetching token counter:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchTokenCounter();
-    }, []);
-
-    if (loading) {
-        return <div>Loading...</div>;
+  const fetchTokenCounter = async () => {
+    try {
+      const count = await contract.tokenIdCounter();
+      setTokenCounter(count.toString());
+    } catch (error) {
+      console.error("Error fetching token counter:", error);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    return (
-        <div>
-            <h2>Minted DRE-NFT Count: {tokenCounter}</h2>
-        </div>
-    );
+  useEffect(() => {
+    if (contract) {
+      fetchTokenCounter();
+    }
+  }, [contract]);
+
+  if (loading) {
+    return <div className="text-gray-700">Loading...</div>;
+  }
+
+  return (
+    <div>
+      <h2 className="text-xl font-semibold mb-4">Current Token ID Counter</h2>
+      <p className="text-gray-700">Token Count: <span className="font-bold">{tokenCounter}</span></p>
+    </div>
+  );
 };
 
 export default TokenCounter;
