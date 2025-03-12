@@ -29,7 +29,7 @@ const MintNFT = ({ contract }) => {
         placeholder="Amount"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
-        className="border border-gray-300 rounded-lg p-2 mb-3 w-full"
+        className="border border-gray-300 rounded-lg p-2 mb-3 w-full hidden"
       />
       <select
         value={collectionType}

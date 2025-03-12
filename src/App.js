@@ -12,21 +12,48 @@ import DREABI from './artifacts/contracts/DRE.json';
 const App = () => {
   const [contract, setContract] = useState(null);
 
+  const checkNetwork = async (provider) => {
+    const { chainId } = await provider.getNetwork();
+    if (chainId !== 11155111) { // Sepolia chain ID
+      alert("Please connect to the Sepolia network.");
+      throw new Error("Network not supported");
+    }
+  };
+
   useEffect(() => {
     const connectContract = async () => {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      
-      // const provider = new ethers.providers.JsonRpcProvider('https://eth-sepolia.g.alchemy.com/v2/hra0WS7LQz4cQfdKoscbvfEFBDB54ELk');
-      // https://sepolia.etherscan.io/address/0x7C2a827254B7a6b8dE57F1547409c8677188A1dd#readContract
+      try {
+        if (!window.ethereum) {
+          alert('Please install MetaMask!');
+          return;
+        }
 
-      await window.ethereum.request({ method: 'eth_requestAccounts' }); // Request account access
-      const signer = provider.getSigner();
+        // Request account access
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-      const contractAddress = '0x7C2a827254B7a6b8dE57F1547409c8677188A1dd';
-      const contractAbi = DREABI.abi;
+        if (accounts.length === 0) {
+          alert('No account found. Please connect to a MetaMask account.');
+          return;
+        }
 
-      const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
-      setContract(contractInstance);
+        const provider = new ethers.providers.Web3Provider(window.ethereum);  // Use Web3Provider with MetaMask
+        await checkNetwork(provider); // Check if on the right network
+        
+        const signer = provider.getSigner(); // Obtain signer after confirming accounts
+        const account = await signer.getAddress(); // Get the user's connected address
+
+        if (!account) {
+          alert('No account found. Please connect to MetaMask account.');
+          return;
+        }
+
+        const contract = new ethers.Contract('0x7C2a827254B7a6b8dE57F1547409c8677188A1dd', DREABI.abi, signer);
+        setContract(contract);
+
+      } catch (error) {
+        console.error('Error connecting to contract:', error); // Handle errors properly
+        alert('Error connecting to contract: ' + error.message);
+      }
     };
 
     connectContract();
