@@ -17,9 +17,14 @@ const TokenCounter = ({ contract }) => {
   };
 
   useEffect(() => {
-    if (contract) {
-      fetchTokenCounter();
-    }
+    // Fetch token counter initially
+    fetchTokenCounter();
+    
+    // Set up interval to fetch the token counter every second
+    const intervalId = setInterval(fetchTokenCounter, 1000);
+
+    // Clear the interval on component unmount
+    return () => clearInterval(intervalId);
   }, [contract]);
 
   if (loading) {
