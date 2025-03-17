@@ -47,7 +47,7 @@ const App = () => {
           return;
         }
 
-        const contract = new ethers.Contract('0x7C2a827254B7a6b8dE57F1547409c8677188A1dd', DREABI.abi, signer);
+        const contract = new ethers.Contract('0x8530Ff0c480e899E6e4fbB0152f8f432c515e3bb', DREABI.abi, signer);
         setContract(contract);
 
       } catch (error) {
