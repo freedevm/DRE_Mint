@@ -14,8 +14,8 @@ const App = () => {
 
   const checkNetwork = async (provider) => {
     const { chainId } = await provider.getNetwork();
-    if (chainId !== 11155111) { // Sepolia chain ID
-      alert("Please connect to the Sepolia network.");
+    if (chainId !== 1) { // Ethereum Main net ID
+      alert("Please connect to the Ethereum network.");
       throw new Error("Network not supported");
     }
   };
@@ -47,7 +47,7 @@ const App = () => {
           return;
         }
 
-        const contract = new ethers.Contract('0x8530Ff0c480e899E6e4fbB0152f8f432c515e3bb', DREABI.abi, signer);
+        const contract = new ethers.Contract('0xdc10dced9f6ef6112bbfe08110eec3424ef088cd', DREABI.abi, signer);
         setContract(contract);
 
       } catch (error) {
